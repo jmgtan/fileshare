@@ -53,7 +53,7 @@ class DefaultController extends Controller
     }
 
     /**
-     * @var Form
+     * @return Form
      */
     private function buildRegistrationForm()
     {
