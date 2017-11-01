@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class DefaultController extends Controller
 {
@@ -24,12 +25,23 @@ class DefaultController extends Controller
     }
 
     /**
+     * @Route("/secured/member_home", name="member_home")
+     */
+    public function memberHomeAction()
+    {
+        return $this->render("FrontendBundle:Default:member_home.html.twig");
+    }
+
+    /**
      * @Route("/login", name="login")
      */
-    public function loginAction(Request $request)
+    public function loginAction(Request $request, AuthenticationUtils $authUtils)
     {
         $registerForm = $this->buildRegistrationForm();
-
+        $loginError = $authUtils->getLastAuthenticationError();
+        if ($loginError != null) {
+            $loginError = "Invalid credentials";
+        }
         $error = null;
         if ($request->isMethod("POST")) {
             $registerForm->handleRequest($request);
@@ -49,7 +61,7 @@ class DefaultController extends Controller
             }
         }
 
-        return $this->render("FrontendBundle:Default:login.html.twig", ["register_form" => $registerForm->createView(), "error" => $error]);
+        return $this->render("FrontendBundle:Default:login.html.twig", ["register_form" => $registerForm->createView(), "error" => $error, "loginError" => $loginError]);
     }
 
     /**

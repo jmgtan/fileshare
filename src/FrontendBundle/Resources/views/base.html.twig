@@ -17,7 +17,11 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <div class="mr-auto"></div>
                     <div class="mr-sm-2">
-                        <a href="{{ path("login") }}">Log In / Sign Up</a>
+                        {% if app.user == null %}
+                            <a href="{{ path("login") }}">Log In / Sign Up</a>
+                        {% else %}
+                            Logged in as {{ app.user.emailAddress }} [<a href="{{ logout_path() }}">Logout</a>]
+                        {% endif %}
                     </div>
                 </div>
             </nav>

@@ -7,3 +7,9 @@ core:
     resource: "@CoreBundle/Controller/"
     type:     annotation
     prefix:   /
+
+login_check:
+  path: /login_check
+
+logout:
+  path: /logout

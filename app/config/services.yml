@@ -15,3 +15,7 @@ services:
         public: true
     CoreBundle\Service\:
       resource: '../../src/CoreBundle/Service/*'
+    FrontendBundle\Controller\:
+      resource: '../../src/FrontendBundle/Controller/*'
+      public: true
+      tags: ['controller.service_arguments']

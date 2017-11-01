@@ -4,13 +4,13 @@ namespace CoreBundle\Service;
 
 use CoreBundle\Entity\User;
 use CoreBundle\Exception\DuplicateEmailException;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserService
 {
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $em;
 
@@ -21,10 +21,10 @@ class UserService
 
     /**
      * UserService constructor.
-     * @param EntityManager $em
+     * @param EntityManagerInterface $em
      * @param UserPasswordEncoderInterface $passwordEncoder
      */
-    public function __construct(EntityManager $em, UserPasswordEncoderInterface $passwordEncoder)
+    public function __construct(EntityManagerInterface $em, UserPasswordEncoderInterface $passwordEncoder)
     {
         $this->em = $em;
         $this->passwordEncoder = $passwordEncoder;
