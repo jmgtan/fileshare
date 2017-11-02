@@ -53,12 +53,16 @@ class ShareService
     {
         $uuid = Uuid::uuid4();
 
+        if ($password != null) {
+            $password = hash("sha512", $password);
+        }
+
         $share = new Share();
         $share->setUser($user);
         $share->setShareKey($uuid);
         $share->setDateCreated(new \DateTime());
         $share->setOriginalFilename($file->getClientOriginalName());
-        $share->setPassword(hash("sha512", $password));
+        $share->setPassword($password);
 
         $this->em->persist($share);
 
