@@ -45,9 +45,11 @@ class DefaultController extends Controller
             if ($uploadForm->isSubmitted() && $uploadForm->isValid()) {
                 /** @var UploadFileFormEntity $entity */
                 $entity = $uploadForm->getData();
-                $originalFilename = $entity->getFile()->getFilename();
-                
-//                $shareService->createNewShare($user, )
+                $share = $shareService->createNewShare($userInterface, $entity->getFile(), $entity->getPassword());
+
+                $this->addFlash("notice", "File uploaded successfully, share key is: ".$share->getShareKey());
+
+                return $this->redirectToRoute("member_home");
             }
         }
 

@@ -7,6 +7,7 @@ use CoreBundle\Entity\User;
 use CoreBundle\Service\Storage\ShareStorageInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ShareService
 {
@@ -44,12 +45,11 @@ class ShareService
 
     /**
      * @param User $user
-     * @param $originalFileName
+     * @param UploadedFile $file
      * @param $password
-     * @param $tempFileLocation
      * @return Share
      */
-    public function createNewShare(User $user, $originalFileName, $password, $tempFileLocation)
+    public function createNewShare(User $user, UploadedFile $file, $password)
     {
         $uuid = Uuid::uuid4();
 
@@ -57,12 +57,12 @@ class ShareService
         $share->setUser($user);
         $share->setShareKey($uuid);
         $share->setDateCreated(new \DateTime());
-        $share->setOriginalFilename($originalFileName);
-        $share->setPassword($password);
+        $share->setOriginalFilename($file->getClientOriginalName());
+        $share->setPassword(hash("sha512", $password));
 
         $this->em->persist($share);
 
-        $this->storage->uploadShare($share, $tempFileLocation);
+        $this->storage->uploadShare($share, $file);
 
         $this->em->flush();
 

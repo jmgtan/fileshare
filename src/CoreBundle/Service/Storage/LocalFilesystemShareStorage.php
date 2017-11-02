@@ -13,12 +13,19 @@ class LocalFilesystemShareStorage implements ShareStorageInterface
     private $em;
 
     /**
+     * @var string
+     */
+    private $storageLocation;
+
+    /**
      * LocalFilesystemShareStorage constructor.
      * @param EntityManagerInterface $em
+     * @param $storageLocation
      */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em, $storageLocation)
     {
         $this->em = $em;
+        $this->storageLocation = $storageLocation;
     }
 
     public function openStream(Share $share)
@@ -28,6 +35,6 @@ class LocalFilesystemShareStorage implements ShareStorageInterface
 
     public function uploadShare(Share $share, UploadedFile $uploadedFile)
     {
-        // TODO: Implement uploadShare() method.
+        $uploadedFile->move($this->storageLocation, $share->getShareKey());
     }
 }

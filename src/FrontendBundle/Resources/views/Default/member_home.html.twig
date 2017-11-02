@@ -4,8 +4,8 @@
 
 {% block body %}
     <div class="row mt-xl-5">
-        <div class="col-6">
-            <div class="p-3 border border-secondar">
+        <div class="col-12">
+            <div class="p-3 border border-light">
                 <h4>Share a File</h4>
                 {{ form_start(uploadForm) }}
                 {{ form_widget(uploadForm) }}
@@ -13,17 +13,20 @@
                 {{ form_end(uploadForm) }}
             </div>
         </div>
-        <div class="col-6">
-            <h4>Latest Shares</h4>
-            <table class="table">
-                <thead>
+    </div>
+    <div class="row mt-xl-5">
+        <div class="col-12">
+            <div class="p-3 border border-light">
+                <h4>Latest Shares</h4>
+                <table class="table">
+                    <thead>
                     <tr>
                         <th>File</th>
                         <th>Share Key</th>
                         <th>Date Created</th>
                     </tr>
-                </thead>
-                <tbody>
+                    </thead>
+                    <tbody>
                     {% if shares is empty %}
                         <tr>
                             <td colspan="3" class="text-center">No uploads</td>
@@ -33,12 +36,13 @@
                             <tr>
                                 <td>{{ share.originalFilename }}</td>
                                 <td>{{ share.shareKey }}</td>
-                                <td>{{ share.dateCreated }}</td>
+                                <td>{{ share.dateCreated|date("d-M-Y H:m:s") }}</td>
                             </tr>
                         {% endfor %}
                     {% endif %}
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 {% endblock %}
