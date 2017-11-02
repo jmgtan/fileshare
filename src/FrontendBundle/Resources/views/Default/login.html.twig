@@ -3,8 +3,8 @@
 {% form_theme register_form 'bootstrap_3_layout.html.twig' %}
 
 {% block body %}
-    <div class="row">
-        <div class="col-12">
+    <div class="row mt-xl-5">
+        <div class="col-6">
             <h3>Log In</h3>
             {% if loginError is defined and loginError != null %}
                 <div class="alert alert-danger">
@@ -23,10 +23,7 @@
                 <button type="submit" class="btn btn-primary btn-lg">Login</button>
             </form>
         </div>
-    </div>
-    <hr />
-    <div class="row">
-        <div class="col-12">
+        <div class="col-6">
             <h3>New User</h3>
             {% if error is defined and error != null %}
                 <div class="alert alert-danger">

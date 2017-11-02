@@ -1,5 +1,44 @@
 {% extends "FrontendBundle::base.html.twig" %}
 
+{% form_theme uploadForm 'CoreBundle::form_theme.html.twig' %}
+
 {% block body %}
-    Member Home
+    <div class="row mt-xl-5">
+        <div class="col-6">
+            <div class="p-3 border border-secondar">
+                <h4>Share a File</h4>
+                {{ form_start(uploadForm) }}
+                {{ form_widget(uploadForm) }}
+                <button type="submit" class="btn btn-primary">Upload</button>
+                {{ form_end(uploadForm) }}
+            </div>
+        </div>
+        <div class="col-6">
+            <h4>Latest Shares</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>File</th>
+                        <th>Share Key</th>
+                        <th>Date Created</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if shares is empty %}
+                        <tr>
+                            <td colspan="3" class="text-center">No uploads</td>
+                        </tr>
+                    {% else %}
+                        {% for share in shares %}
+                            <tr>
+                                <td>{{ share.originalFilename }}</td>
+                                <td>{{ share.shareKey }}</td>
+                                <td>{{ share.dateCreated }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 {% endblock %}
