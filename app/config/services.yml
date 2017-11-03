@@ -18,7 +18,6 @@ services:
       exclude: '../../src/CoreBundle/Service/{ShareService.php, Storage/*}'
     CoreBundle\Service\Storage\LocalFilesystemShareStorage:
       arguments:
-        - "@doctrine.orm.entity_manager"
         - "%local_storage_location%"
     CoreBundle\Service\ShareService:
       arguments:

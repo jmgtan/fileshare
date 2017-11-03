@@ -58,6 +58,50 @@ class Share
     private $dateCreated;
 
     /**
+     * @var integer
+     * @ORM\Column(name="file_size", type="integer", nullable=false)
+     */
+    private $fileSize;
+
+
+    /**
+     * @var resource
+     */
+    private $storageHandler;
+
+    /**
+     * @return int
+     */
+    public function getFileSize()
+    {
+        return $this->fileSize;
+    }
+
+    /**
+     * @param int $fileSize
+     */
+    public function setFileSize($fileSize)
+    {
+        $this->fileSize = $fileSize;
+    }
+
+    /**
+     * @return resource
+     */
+    public function getStorageHandler()
+    {
+        return $this->storageHandler;
+    }
+
+    /**
+     * @param resource $storageHandler
+     */
+    public function setStorageHandler($storageHandler)
+    {
+        $this->storageHandler = $storageHandler;
+    }
+
+    /**
      * @return User
      */
     public function getUser()

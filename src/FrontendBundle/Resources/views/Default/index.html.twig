@@ -1,20 +1,22 @@
 {% extends "FrontendBundle::base.html.twig" %}
 
+{% form_theme downloadForm 'CoreBundle::form_theme.html.twig' %}
+
 {% block body %}
     <div class="row mt-xl-5">
-        <div class="col-2"></div>
-        <div class="col-8">
-            <form action="" method="post">
-                <div class="row">
-                    <div class="col-10">
-                        <input type="text" class="form-control form-control-lg" placeholder="Enter Share ID">
+        <div class="col-12">
+            <div class="p-3 border border-light">
+                <h4>Download Share</h4>
+                {% if error is defined and error != null %}
+                    <div class="alert alert-danger">
+                        {{ error }}
                     </div>
-                    <div class="col-2">
-                        <button type="submit" class="btn btn-lg btn-primary">Download</button>
-                    </div>
-                </div>
-            </form>
+                {% endif %}
+                {{ form_start(downloadForm) }}
+                {{ form_widget(downloadForm) }}
+                <button type="submit" class="btn btn-primary">Download</button>
+                {{ form_end(downloadForm) }}
+            </div>
         </div>
-        <div class="col-2"></div>
     </div>
 {% endblock %}

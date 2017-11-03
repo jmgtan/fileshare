@@ -3,8 +3,10 @@
 namespace FrontendBundle\Controller;
 
 use CoreBundle\Exception\DuplicateEmailException;
+use CoreBundle\Exception\InvalidShareKeyException;
 use CoreBundle\Service\ShareService;
 use CoreBundle\Service\UserService;
+use FrontendBundle\Form\Entity\DownloadShareFormEntity;
 use FrontendBundle\Form\Entity\RegistrationFormEntity;
 use FrontendBundle\Form\Entity\UploadFileFormEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -13,6 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -23,9 +26,40 @@ class DefaultController extends Controller
     /**
      * @Route("/", name="homepage")
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
-        return $this->render('FrontendBundle:Default:index.html.twig');
+        $downloadForm = $this->buildDownloadForm();
+        $error = null;
+        if ($request->isMethod("POST")) {
+            $downloadForm->handleRequest($request);
+
+            if ($downloadForm->isSubmitted() && $downloadForm->isValid()) {
+                /** @var DownloadShareFormEntity $entity */
+                $entity = $downloadForm->getData();
+
+                /** @var ShareService $shareService */
+                $shareService = $this->get(ShareService::class);
+
+                try {
+                    $share = $shareService->downloadShare($entity->getShareKey(), $entity->getPassword());
+                    header("Content-Type: application/octet-stream");
+                    header("Content-Disposition: attachment; filename=".$share->getOriginalFilename());
+                    header("Content-Length: ".$share->getFileSize());
+                    $resource = $share->getStorageHandler();
+
+                    while(!feof($resource)) {
+                        echo fread($resource, 1024);
+                    }
+
+                    fclose($resource);
+
+                } catch (InvalidShareKeyException $e) {
+                    $error = $e->getMessage();
+                }
+            }
+        }
+
+        return $this->render('FrontendBundle:Default:index.html.twig', ["downloadForm" => $downloadForm->createView(), "error" => $error]);
     }
 
     /**
@@ -86,6 +120,19 @@ class DefaultController extends Controller
         }
 
         return $this->render("FrontendBundle:Default:login.html.twig", ["register_form" => $registerForm->createView(), "error" => $error, "loginError" => $loginError]);
+    }
+
+    /**
+     * @return Form
+     */
+    private function buildDownloadForm()
+    {
+        $entity = new DownloadShareFormEntity();
+
+        return $this->createFormBuilder($entity)
+                ->add("shareKey", TextType::class, ['label' => 'Share Key'])
+                ->add("password", PasswordType::class, ['label' => 'Password (Optional)', 'required'=>false])
+                ->getForm();
     }
 
     /**

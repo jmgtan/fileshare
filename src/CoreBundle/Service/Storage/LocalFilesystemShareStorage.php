@@ -8,29 +8,22 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class LocalFilesystemShareStorage implements ShareStorageInterface
 {
     /**
-     * @var EntityManagerInterface
-     */
-    private $em;
-
-    /**
      * @var string
      */
     private $storageLocation;
 
     /**
      * LocalFilesystemShareStorage constructor.
-     * @param EntityManagerInterface $em
      * @param $storageLocation
      */
-    public function __construct(EntityManagerInterface $em, $storageLocation)
+    public function __construct($storageLocation)
     {
-        $this->em = $em;
         $this->storageLocation = $storageLocation;
     }
 
     public function openStream(Share $share)
     {
-        // TODO: Implement openStream() method.
+        return fopen($this->storageLocation.'/'.$share->getShareKey(), "r");
     }
 
     public function uploadShare(Share $share, UploadedFile $uploadedFile)

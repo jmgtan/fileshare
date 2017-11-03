@@ -23,6 +23,7 @@
                     <tr>
                         <th>File</th>
                         <th>Share Key</th>
+                        <th>Protected</th>
                         <th>Date Created</th>
                     </tr>
                     </thead>
@@ -36,6 +37,13 @@
                             <tr>
                                 <td>{{ share.originalFilename }}</td>
                                 <td>{{ share.shareKey }}</td>
+                                <td>
+                                    {% if share.password != null %}
+                                        <span class="badge badge-success">Yes</span>
+                                    {% else %}
+                                        <span class="badge badge-danger">No</span>
+                                    {% endif %}
+                                </td>
                                 <td>{{ share.dateCreated|date("d-M-Y H:m:s") }}</td>
                             </tr>
                         {% endfor %}
