@@ -63,6 +63,31 @@ class ShareService
     }
 
     /**
+     * @param $shareKey
+     * @param User $user
+     * @return Share
+     * @throws InvalidShareKeyException
+     */
+    public function memberDownload($shareKey, User $user)
+    {
+        /** @var Share $share */
+        $share = $this->em->getRepository(Share::class)->findOneByShareKey($shareKey);
+
+        if ($share == null) {
+            throw new InvalidShareKeyException();
+        }
+
+        if ($share->getUser()->getId() != $user->getId()) {
+            throw new InvalidShareKeyException();
+        }
+
+        $resource = $this->storage->openStream($share);
+        $share->setStorageHandler($resource);
+
+        return $share;
+    }
+
+    /**
      * @param User $user
      * @return Share[]
      */

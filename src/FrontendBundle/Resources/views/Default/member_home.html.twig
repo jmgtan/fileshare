@@ -23,7 +23,6 @@
                     <tr>
                         <th>File</th>
                         <th>Share Key</th>
-                        <th>Protected</th>
                         <th>Date Created</th>
                     </tr>
                     </thead>
@@ -35,15 +34,16 @@
                     {% else %}
                         {% for share in shares %}
                             <tr>
-                                <td>{{ share.originalFilename }}</td>
-                                <td>{{ share.shareKey }}</td>
                                 <td>
+                                    <a href="{{ path("member_download", {"key": share.shareKey}) }}">{{ share.originalFilename }}</a>
+                                    <br />
                                     {% if share.password != null %}
-                                        <span class="badge badge-success">Yes</span>
+                                        <span class="badge badge-success">Password Protected</span>
                                     {% else %}
-                                        <span class="badge badge-danger">No</span>
+                                        <span class="badge badge-danger">Not Protected</span>
                                     {% endif %}
                                 </td>
+                                <td>{{ share.shareKey }}</td>
                                 <td>{{ share.dateCreated|date("d-M-Y H:m:s") }}</td>
                             </tr>
                         {% endfor %}

@@ -2,6 +2,7 @@
 
 namespace FrontendBundle\Controller;
 
+use CoreBundle\Entity\Share;
 use CoreBundle\Exception\DuplicateEmailException;
 use CoreBundle\Exception\InvalidShareKeyException;
 use CoreBundle\Service\ShareService;
@@ -42,17 +43,7 @@ class DefaultController extends Controller
 
                 try {
                     $share = $shareService->downloadShare($entity->getShareKey(), $entity->getPassword());
-                    header("Content-Type: application/octet-stream");
-                    header("Content-Disposition: attachment; filename=".$share->getOriginalFilename());
-                    header("Content-Length: ".$share->getFileSize());
-                    $resource = $share->getStorageHandler();
-
-                    while(!feof($resource)) {
-                        echo fread($resource, 1024);
-                    }
-
-                    fclose($resource);
-
+                    $this->downloadShare($share);
                 } catch (InvalidShareKeyException $e) {
                     $error = $e->getMessage();
                 }
@@ -60,6 +51,28 @@ class DefaultController extends Controller
         }
 
         return $this->render('FrontendBundle:Default:index.html.twig', ["downloadForm" => $downloadForm->createView(), "error" => $error]);
+    }
+
+    /**
+     * @Route("/secured/member_download/{key}", name="member_download")
+     */
+    public function memberDownloadAction($key, Request $request, UserInterface $user)
+    {
+        $error = null;
+
+        try {
+            /** @var ShareService $shareService */
+            $shareService = $this->get(ShareService::class);
+            $share = $shareService->memberDownload($key, $user);
+            $this->downloadShare($share);
+        } catch (InvalidShareKeyException $e) {
+            $error = $e->getMessage();
+        }
+
+        if ($error != null) {
+            $this->addFlash("error", $error);
+            return $this->redirectToRoute("member_home");
+        }
     }
 
     /**
@@ -120,6 +133,23 @@ class DefaultController extends Controller
         }
 
         return $this->render("FrontendBundle:Default:login.html.twig", ["register_form" => $registerForm->createView(), "error" => $error, "loginError" => $loginError]);
+    }
+
+    /**
+     * @param Share $share
+     */
+    private function downloadShare(Share $share)
+    {
+        header("Content-Type: application/octet-stream");
+        header("Content-Disposition: attachment; filename=".$share->getOriginalFilename());
+        header("Content-Length: ".$share->getFileSize());
+        $resource = $share->getStorageHandler();
+
+        while(!feof($resource)) {
+            echo fread($resource, 1024);
+        }
+
+        fclose($resource);
     }
 
     /**
