@@ -1,0 +1,98 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Builds the base VPC and provisions initial instance for the FileShare workshop"
+Parameters:
+  VPCNameParameter:
+    Type: "String"
+    Default: "fileshare"
+Resources:
+  FileShareVPC:
+    Type: "AWS::EC2::VPC"
+    Properties:
+      CidrBlock: "10.0.0.0/16"
+      Tags:
+      - Key: Name
+        Value: !Ref VPCNameParameter
+  PublicSubnetA:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      CidrBlock: "10.0.0.0/24"
+      MapPublicIpOnLaunch: true
+      AvailabilityZone: "ap-southeast-1a"
+      VpcId: !Ref FileShareVPC
+  PublicSubnetB:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      CidrBlock: "10.0.1.0/24"
+      MapPublicIpOnLaunch: true
+      AvailabilityZone: "ap-southeast-1b"
+      VpcId: !Ref FileShareVPC
+  PrivateSubnetA:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      CidrBlock: "10.0.2.0/24"
+      MapPublicIpOnLaunch: false
+      AvailabilityZone: "ap-southeast-1a"
+      VpcId: !Ref FileShareVPC
+  PrivateSubnetB:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      CidrBlock: "10.0.3.0/24"
+      MapPublicIpOnLaunch: false
+      AvailabilityZone: "ap-southeast-1b"
+      VpcId: !Ref FileShareVPC
+  PublicRouteTable:
+    Type: "AWS::EC2::RouteTable"
+    Properties:
+      VpcId: !Ref FileShareVPC
+  PrivateRouteTable:
+    Type: "AWS::EC2::RouteTable"
+    Properties:
+      VpcId: !Ref FileShareVPC
+  IGW:
+    Type: "AWS::EC2::InternetGateway"
+  IGWAttachment:
+    Type: "AWS::EC2::VPCGatewayAttachment"
+    Properties:
+      InternetGatewayId: !Ref IGW
+      VpcId: !Ref FileShareVPC
+  NatGwEip:
+    Type: "AWS::EC2::EIP"
+    Properties:
+      Domain: "vpc"
+  NatGw:
+    Type: "AWS::EC2::NatGateway"
+    Properties:
+      AllocationId: !GetAtt NatGwEip.AllocationId
+      SubnetId: !Ref PublicSubnetA
+  IGWRoute:
+    Type: "AWS::EC2::Route"
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: "0.0.0.0/0"
+      GatewayId: !Ref IGW
+  NatGwRoute:
+    Type: "AWS::EC2::Route"
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      DestinationCidrBlock: "0.0.0.0/0"
+      NatGatewayId: !Ref NatGw
+  PrivateSubnetARouteTableAssoc:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref PrivateSubnetA
+  PrivateSubnetBRouteTableAssoc:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref PrivateSubnetB
+  PublicSubnetARouteTableAssoc:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnetA
+  PublicSubnetBRouteTableAssoc:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnetB
