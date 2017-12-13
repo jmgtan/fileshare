@@ -150,6 +150,7 @@ class DefaultController extends Controller
         }
 
         fclose($resource);
+        exit;
     }
 
     /**

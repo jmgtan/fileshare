@@ -18,3 +18,5 @@ parameters:
     # A secret key that's used to generate certain security-related tokens
     secret: ThisTokenIsNotSoSecretChangeIt
     local_storage_location: /tmp
+    s3_bucket:
+    s3_region:

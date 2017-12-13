@@ -19,10 +19,15 @@ services:
     CoreBundle\Service\Storage\LocalFilesystemShareStorage:
       arguments:
         - "%local_storage_location%"
+    CoreBundle\Service\Storage\S3ShareStorage:
+      arguments:
+        - "%local_storage_location%"
+        - "%s3_region%"
+        - "%s3_bucket%"
     CoreBundle\Service\ShareService:
       arguments:
         - "@doctrine.orm.entity_manager"
-        - "@CoreBundle\\Service\\Storage\\LocalFilesystemShareStorage"
+        - "@CoreBundle\\Service\\Storage\\S3ShareStorage"
     FrontendBundle\Controller\:
       resource: '../../src/FrontendBundle/Controller/*'
       public: true
