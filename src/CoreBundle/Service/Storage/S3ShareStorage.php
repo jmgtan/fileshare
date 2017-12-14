@@ -33,20 +33,22 @@ class S3ShareStorage implements ShareStorageInterface
             "region" => $this->region
         ]);
 
+        $this->_s3Client->registerStreamWrapper();
         $this->storageLocation = $storageLocation;
     }
 
     public function openStream(Share $share)
     {
-        $tempFile = $this->storageLocation."/t_".$share->getShareKey();
-
-        $this->_s3Client->getObject([
-            "Bucket" => $this->bucket,
-            "Key" => $share->getShareKey(),
-            "SaveAs" => $tempFile
-        ]);
-
-        return fopen($tempFile, "r");
+//        $tempFile = $this->storageLocation."/t_".$share->getShareKey();
+//
+//        $this->_s3Client->getObject([
+//            "Bucket" => $this->bucket,
+//            "Key" => $share->getShareKey(),
+//            "SaveAs" => $tempFile
+//        ]);
+//
+//        return fopen($tempFile, "r");
+        return fopen("s3://".$this->bucket."/".$share->getShareKey(), "r");
     }
 
     public function uploadShare(Share $share, UploadedFile $uploadedFile)
